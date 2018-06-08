@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+This project is a simple recreation of JS Bin, a live pastebin for HTML, CSS and JS.
+It is a simple page without all the functionalities of JS Bin. This application simply
+allows the user to enter HTML, CSS and JS into a textarea and have the result output to
+an iframe on the page.
+-->
+
+<head>
+  <title>JS Bin Clone</title>
+
+  <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
+  <link rel="stylesheet" href="stylesheet.css">
+
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+</head>
+
+<body>
+  <div id="header">
+    <div id="logo">CodePlayer</div>
+    <div id="buttonContainer">
+      <div class="toggleButton active" id="html">HTML</div>
+      <div class="toggleButton" id="css">CSS</div>
+      <div class="toggleButton" id="javascript"> Javascript</div>
+      <div class="toggleButton active" id="output">Output</div>
+    </div>
+  </div>
+
+  <div id="bodyContainer">
+    <textarea placeholder="HTML here"class="panel" id="htmlPanel"></textarea>
+    <textarea placeholder="CSS here"class="panel hidden" id="cssPanel"></textarea>
+    <textarea placeholder="Javascript here"class="panel hidden" id="javascriptPanel"></textarea>
+    <iframe class="panel" id="outputPanel"></iframe>
+
+  </div>
+
+  <script type="text/javascript">
+
+  function updateOutput(){
+    $("iframe").contents().find("html").html("<html><head><style type = 'text/css'>" +
+      $("#cssPanel").val() + "</style></head><body>" +
+      $("#htmlPanel").val());
+
+      document.getElementById("outputPanel").contentWindow.eval($("#javascriptPanel").val());
+
+  }
+
+    //Use jquery to style toggle buttons to make interactions more clear to user
+    $('.toggleButton').hover(function() {
+      $(this).addClass("highlightedButton");
+
+    }, function() {
+      $(this).removeClass("highlightedButton");
+    });
+
+    //Add proper funcitonality to the toggle buttons
+    $('.toggleButton').click(function() {
+      $(this).toggleClass("active");
+
+      let panelId = $(this).attr("id") + "Panel";
+      $("#" + panelId).toggleClass("hidden");
+
+      //Adjust width of panels
+      let activePanels = 4 - $('.hidden').length;
+      $('.panel').width(($(window).width() / activePanels) - 15);
+    });
+
+    let activePanels = 4 - $('.hidden').length;
+    $('.panel').width(($(window).width() / activePanels) - 15);
+
+    $('textarea').height($(window).height() - $('#header').height() - 16);
+    $('iframe').height($(window).height() - $('#header').height() - 16);
+
+
+    updateOutput();
+
+
+    //Event listener for text entered into html textArea. Callback function uses the text entered
+    //to change thet html, css, and javascript content in the output iframe.
+    $("textarea").on("change keyup paste", function() {
+      updateOutput();
+    });
+  </script>
+</body>
+
+</html>
